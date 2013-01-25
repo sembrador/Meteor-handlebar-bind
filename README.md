@@ -34,7 +34,7 @@ Here's an example using the ```{{find}}``` from the ```handlebar-helpers``` pack
 ```
 *To make this a simple live / twoway binding set option ```liveUpdate:true``` eg.: ```Contacts.bindTemplate('hello', { liveUpdate: true });```*
 
-###Using ```{{bindAction 'Action'}} helper:
+###Using ```{{bindAction 'Action'}}``` helper:
 This helper lets you define tags: ```<a class="btn">```, ```<button>``` and ```<input>``` as an binding for actions: ```create```, ```update```, ```delete``` and ```cancel``` - last one resets the form fields to default *```cancel``` doesn't work when liveUpdate:true as this updates database live on keystrokes*
 ```html
   {{#each find 'Contacts' '{}'}}
@@ -93,10 +93,11 @@ Validations are weigthed in the sense of three levels of acceptance:
 
 All of the ```validations``` and ```dirty data marks``` are kept in a ```bindRecord``` object. The ```bindRecord``` is a reactive data source - giving instant live validation updates in the templating system.
 
-###Validation data from the ```bindRecord``` can be used in three levels:
+###Validation data from the ```bindRecord``` can be used in four levels:
 * ```Attribute``` level - only one attribute eg. ```dirty``` from a key ```email``` gets returned
 * ```Key``` level - only validation data from a single field
 * ```Record``` level - only validation data from one data context
+* ```Template``` level - contains keys attributes counts *eg. how many fields have error on email*
 
 ####Attribute level - Using the ```{{bindStatus 'templateName' 'key' 'attribute'}}```
 This helper returns a boolean true/false value from a key attribute (```success```, ```warning```, ```error```, ```dirty```)
