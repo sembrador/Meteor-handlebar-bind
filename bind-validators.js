@@ -6,7 +6,7 @@ var Validators = {
   },
   shouldBeLongerThan: function(len) {
     return function(value) {
-      return (value.length > len); //All validators should accept empty input except required
+      return (value.length > len || value.length == 0); //All validators should accept empty input except required
     };
   },
   //Required is the ONLY validation function that not accept empty value

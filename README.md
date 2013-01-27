@@ -107,6 +107,8 @@ Example:
   Add contact:<br/>
   <input {{bind 'name'}}/>
   <input {{bind 'email'}}/>
+  {{#if bindStatus 'hello' 'email' 'invalid'}}*{{/if}}
+  {{#if bindStatus 'hello' 'email' 'required'}}*{{/if}}
   {{#if bindStatus 'hello' 'email' 'dirty'}}*{{/if}}
   {{#if bindStatus 'hello' 'email' 'warning'}}?{{/if}}
   {{#if bindStatus 'hello' 'email' 'error'}}!{{/if}}
@@ -117,6 +119,7 @@ This helper returns the ```bindRecord``` at key level.
 Returned object structure:
 ```js
 {
+    invalid: true/false,
     success: true/false,
     warning: true/false,
     error: true/false,
@@ -149,18 +152,21 @@ Example:
 This helper returns the ```bindRecord``` at record level.
 Returned object structure:
 ```js
-[
+name : '',
+keys [
     name: {
-        success: true/false,
         warning: true/false,
         error: true/false,
-        dirty: true/false
+        dirty: true/false,
+        invalid: true/false,
+        required: true/false
     },
     email: {
-        success: true/false,
         warning: true/false,
         error: true/false,
-        dirty: true/false
+        dirty: true/false,
+        invalid: true/false,
+        required: true/false
     }
 ]
 ```
@@ -170,18 +176,22 @@ This helper returns the ```bindRecord``` at template level.
 Returned object structure: ```[key]{attribute}``` containing counts.
 
 ```js
-[
-    name: {
-        success: 0 .. ?,
-        warning: 0 .. ?,
-        error: 0 .. ?,
-        dirty: 0 .. ?
-    },
-    email: {
-        success: 0 .. ?,
-        warning: 0 .. ?,
-        error: 0 .. ?,
-        dirty: 0 .. ?
-    }
+[ //Firs item is a total stats of template validation
+  total: {
+      warning: 0 .. ?, //All warnings counted
+      error: 0 .. ?,
+      dirty: 0 .. ?,
+      invalid: 0 .. ?,
+      required: 0 .. ?
+  }
+], [ //Pr. Key follows as totals from the template validation
+  name: '',
+  key: {
+      warning: 0 .. ?, //num of wrnings for single key in template
+      error: 0 .. ?,
+      dirty: 0 .. ?,
+      invalid: 0 .. ?,
+      required: 0 .. ?
+  }
 ]
 ```

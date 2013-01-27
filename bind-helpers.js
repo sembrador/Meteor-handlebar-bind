@@ -13,7 +13,8 @@
       var setValue = (this[key])?(' value="'+_.escape(this[key])+'"'):'value=""'; //Only set value if key found
       //If key not found then the binding could be on new data set or fail use
       var setBindKey = 'bindKey="'+key+'"';                                //Attach bind to data key in collection record
-      var setId = 'id="'+((this._id)?this._id:'unknown')+'.'+key+'"';      //Preserve input
+      var unifiedId = (this._id)?this._id:'unknown';
+      var setId = 'id="'+unifiedId+'.'+key+'"';      //Preserve input
       return new Handlebars.SafeString(setValue+setBindKey+setId);          //Output element's: [value] bindKey id
     });
     /*
@@ -24,12 +25,14 @@
     });
 
     Handlebars.registerHelper('isBindDirty', function (key) {
-      var setId = 'id="isBindDirty.'+((this._id)?this._id:'unknown')+'.'+key+'"';
+      var unifiedId = (this._id)?this._id:'unknown';
+      var setId = 'id="isBindDirty.'+unifiedId+'.'+key+'"';
       return new Handlebars.SafeString('<span '+setId+' class="isBindDirty"></span>');
     });
 
     Handlebars.registerHelper('bindMessage', function (key) {
       var myKey = (key instanceof Object)?'':'.'+key;
+      var unifiedId = (this._id)?this._id:'unknown';
       var setId = 'id="__bindMsg.'+((this._id)?this._id:'unknown')+myKey+'"';
       return new Handlebars.SafeString('<span '+setId+' class="bindMessage"></span>');
     });
@@ -42,11 +45,25 @@
     });
 
     Handlebars.registerHelper('bindStatus', function (template, bindKey, attribute) {
-      var records = (template && Template[template])?Template[template].bindRecord:undefined;
-      var statusRecord = (records && this._id && records[this._id])? records[this._id]:undefined;
-      var statusKey = (statusRecord && bindKey)? statusRecord[bindKey]:undefined;
-      var statusAttribute = (statusKey && attribute)? statusKey[attribute]:undefined;
-      return statusAttribute || statusKey || statusRecord || { error: true};  
+      if (template && Template[template] && Template[template].bindRecord) {
+        //Template is binded to collection
+        var unifiedId = (this._id)?this._id:'unknown';
+        return Template[template].bindRecord.get(unifiedId, bindKey, attribute);
+
+      } else {
+        //Template is not binded?
+        throw new Error('Template '+template+' is not binded to Collection, cannot get bindStatus');
+      }
+    });
+
+    Handlebars.registerHelper('bindStatusReport', function (template) {
+      if (template && Template[template] && Template[template].bindRecord) {
+        //Template is binded to collection
+        return Template[template].bindRecord.get();
+      } else {
+        //Template is not binded?
+        throw new Error('Template '+template+' is not binded to Collection, cannot get bindStatus');
+      }
     });
 
     //TODO: Replace all document.getElementById with template in scope findAll

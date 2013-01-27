@@ -1,124 +1,13 @@
 var	testCollection = new Meteor.Collection(null);
 
 (function () {
-  Tinytest.add('Handlebar helpers - init session templates', function (test) {
-	  var frag = Meteor.render(Template.test_helpers_00);
-	  test.equal(canonicalizeHtml(DomUtils.fragmentToHtml(frag)), "Hi");
+
+	Tinytest.add('Handlebar bind - General test', function (test) {
 	});
 
-	Tinytest.add('Handlebar helpers - init session helpers', function (test) {
-	  test.notEqual(Handlebars._default_helpers['getSession'], undefined, 'getSession: Handlebars loaded after session_helpers?');
-	  test.notEqual(Handlebars._default_helpers['sessionEquals'], undefined, 'sessionEquals: Handlebars loaded after session_helpers?');
-	  test.notEqual(Handlebars._default_helpers['find'], undefined, 'find: Handlebars loaded after session_helpers?');
-	  test.notEqual(Handlebars._default_helpers['findOne'], undefined, 'findOne: Handlebars loaded after session_helpers?');
-	});
+//TODO: write tests for all the code...
 
-	Tinytest.add('Handlebar helpers - test {{getSession}}', function (test) {
-		Session.set('test', undefined);
-		var onscreen = OnscreenDiv(Meteor.render(Template.test_helpers_10));
-		test.include(["<!--empty-->", 'ok'], onscreen.rawHtml(), 'getSession should be empty or set from last session');
-		Session.set('test', 'jlfkjsdfldf');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), "jlfkjsdfldf", 'getSession dont return as expected');
-		Session.set('test', 'ok');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), "ok", 'getSession dont return "ok" as expected');
-		onscreen.kill();
-	});
-
-	Tinytest.add('Handlebar helpers - {{sessionEquals}} String', function (test) {
-		//Template.test_helpers_20
-		Session.set('test', undefined);
-		var onscreen = OnscreenDiv(Meteor.render(Template.test_helpers_20));
-		test.equal(onscreen.rawHtml(), 'false');
-		Session.set('test', 'sdfsdfdsf');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'true');
-		Session.set('test', 'ok');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'false');
-		onscreen.kill();
-	});
-
-	Tinytest.add('Handlebar helpers - {{sessionEquals}} Integer', function (test) {
-		//Template.test_helpers_21
-		Session.set('test', undefined);
-		var onscreen = OnscreenDiv(Meteor.render(Template.test_helpers_21));
-		var onscreen2 = OnscreenDiv(Meteor.render(Template.test_helpers_22));
-		var onscreen3 = OnscreenDiv(Meteor.render(Template.test_helpers_20));
-		test.equal(onscreen.rawHtml(), 'false');
-		
-		Session.set('test', 1);
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'true');
-		test.equal(onscreen2.rawHtml(), 'true');
-		test.equal(onscreen3.rawHtml(), 'false');
-
-		Session.set('test', 'ok');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'false');
-		onscreen.kill();
-		onscreen2.kill();
-		onscreen3.kill();
-
-	});
-
-	//XXX: Only string and int can be passed as parametre for helpers?
-	Tinytest.add('Handlebar helpers - {{sessionEquals}} Array', function (test) {
-		//Test of arrays
-		//Template.test_helpers_23
-		Session.set('test', undefined);
-		var onscreen = OnscreenDiv(Meteor.render(Template.test_helpers_23));
-		//test.equal(onscreen.rawHtml(), 'false');
-		Session.set('test', ['a', 'b', 'c']);
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'true', 'Issue 617, This fails due to lack of support for value input as array');
-		Session.set('test', 'ok');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'false');
-		onscreen.kill();
-	});
-
-	//XXX: Only string and int can be passed as parametre for helpers?
-	Tinytest.add('Handlebar helpers - {{sessionEquals}} Objects', function (test) {
-		//Test of arrays
-		//Template.test_helpers_23
-		Session.set('test', undefined);
-		var onscreen = OnscreenDiv(Meteor.render(Template.test_helpers_24));
-		test.notEqual(Template.test_helpers_24, undefined, 'Handlebars does not support objects as input in helpers');
-		//test.equal(onscreen.rawHtml(), 'false');
-		Session.set('test', {foo: 'bar'});
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'true', 'Issue 617, This fails due to lack of support for value input as objects');
-		Session.set('test', 'ok');
-		Meteor.flush();
-		test.equal(onscreen.rawHtml(), 'false');
-		onscreen.kill();
-	});
-
-	Tinytest.add('Handlebar helpers - {{sessionEquals}} Boolean', function (test) {
-		//Template.test_helpers_24
-		Session.set('test', undefined);
-		var onscreen1 = OnscreenDiv(Meteor.render(Template.test_helpers_25));
-		var onscreen2 = OnscreenDiv(Meteor.render(Template.test_helpers_26));
-		var onscreen3 = OnscreenDiv(Meteor.render(Template.test_helpers_27)); //Test if sessionEquals
-		test.equal(onscreen1.rawHtml(), 'false');
-		Session.set('test', true);
-		Meteor.flush();
-		test.equal(onscreen1.rawHtml(), 'true');
-		test.equal(onscreen2.rawHtml(), 'false');
-		test.equal(onscreen3.rawHtml(), 'Test is true');
-		Session.set('test', false);
-		Meteor.flush();
-		test.equal(onscreen1.rawHtml(), 'false');
-		test.equal(onscreen2.rawHtml(), 'true');
-		test.equal(onscreen3.rawHtml(), 'Test is false');
-		onscreen1.kill();
-		onscreen2.kill();
-		onscreen3.kill();
-	});
-
-	Tinytest.addAsync("Handlebar helpers - test {{findOne}} and {{find}}", function (test, onComplete) {
+	/*Tinytest.addAsync("Handlebar helpers - test {{findOne}} and {{find}}", function (test, onComplete) {
 		testCollection.insert({ a: 1, b:2 });
 
 		var onscreen1 = OnscreenDiv(Meteor.render(Template.test_helpers_30)); //findOne
@@ -154,7 +43,7 @@ var	testCollection = new Meteor.Collection(null);
 		onscreen4.kill();
 		onscreen5.kill();
 		onComplete();
-	});
+	});*/
 
 }());
 
