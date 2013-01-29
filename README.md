@@ -7,6 +7,7 @@ There are 3 simple bind handlers
 * {{bind}}
 * {{bindAction}}
 * {{bindSelected}}
+
 And 2 for validation feedback:
 * {{bindStatus}}
 * {{bindStatusReport}}
