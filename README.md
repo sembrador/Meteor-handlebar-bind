@@ -35,7 +35,13 @@ Here's an example using the ```{{find}}``` from the ```handlebar-helpers``` pack
 *To make this a simple live / twoway binding set option ```liveUpdate:true``` eg.: ```Contacts.bindTemplate('hello', { liveUpdate: true });```*
 
 ###Using ```{{bindAction 'Action'}}``` helper:
-This helper lets you define tags: ```<a class="btn">```, ```<button>``` and ```<input>``` as an binding for actions: ```create```, ```update```, ```delete``` and ```cancel``` - last one resets the form fields to default *```cancel``` doesn't work when liveUpdate:true as this updates database live on keystrokes*
+This helper lets you define tags: ```<a class="btn">```, ```<button>``` and ```<input>``` as an binding for actions: ```create```, ```update```, ```delete```, ```upload``` and ```cancel``` - last one resets the form fields to default *```cancel``` doesn't work when liveUpdate:true as this updates database live on keystrokes*
+Note: At the moment the ```upload``` saves file in suffix ```_data``` eg. 
+```js
+<input type="file" {{bindAction 'upload' 'image'}}/>
+<img src="{{image_data}}"  {{bind 'image_data'}}/>
+```
+*The fileupload part is still not working as expected due to spark preserve and live update*
 ```html
   {{#each find 'Contacts' '{}'}}
     <input {{bind 'name'}}/>
