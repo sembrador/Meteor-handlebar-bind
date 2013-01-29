@@ -3,9 +3,11 @@ Is a simple way of binding Collections to the Meteor handlebars template environ
 
 Have a look at [Live example](http://handlebar-helpers.meteor.com/)
 
-There are 4 simple handlers
+There are 3 simple bind handlers
 * {{bind}}
 * {{bindAction}}
+* {{bindSelected}}
+And 2 for validation feedback:
 * {{bindStatus}}
 * {{bindStatusReport}}
 
@@ -36,7 +38,7 @@ Here's an example using the ```{{find}}``` from the ```handlebar-helpers``` pack
 
 ###Using ```{{bindAction 'Action'}}``` helper:
 This helper lets you define tags: ```<a class="btn">```, ```<button>``` and ```<input>``` as an binding for actions: ```create```, ```update```, ```delete```, ```upload``` and ```cancel``` - last one resets the form fields to default
-* ```cancel``` doesn't work when liveUpdate:true as this updates database live on keystrokes*
+```cancel``` doesn't work when liveUpdate:true as this updates database live on keystrokes
 
 Note: At the moment the ```upload``` saves file in suffix ```_data``` eg. 
 ```js
