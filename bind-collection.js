@@ -9,24 +9,56 @@
           Template[template].bindRecord = new BindRecord(); //Record to update, a list with key as _id, contains array of key and node.
           Template[template].validation = (options)?options.validation:undefined;
           Template[template].collectionBinding = this;
+          Template[template].preserve({
+            'img[name]' : function(node) { return node.name; }
+          });
           Template[template].events({
-            'click input': function(e, temp) {
+            'click input[type=button], click a.btn, click button': function(e, temp) {
+             // console.log('Got button event');
               myColl.doBindAction(template, this, e.target);
             },
-            'click a.btn': function(e, temp) {
-              myColl.doBindAction(template, this, e.target);
-            },
-            'click button': function(e, temp) {
-              myColl.doBindAction(template, this, e.target);
-            },
-            'keyup input': function(e) {
-              //Do live twoway binding or make user press the binded action?
+
+            //TODO: load or loaded?
+            //Check out the event flow when uploading, does spark trigger onload? (makeing a circular event)
+            //Something is broke - except when in live update - that just works?
+            //
+            'load img, change a, keyup input, keyup textarea, change input[type=checkbox], change input[type=radio], change input[type=hidden], change select': function(e) {
               if ( (options && options.liveUpdate === true) && this._id != undefined)
                 myColl.bindUpdateLive(this, e.target) //Live data for _id records, new records require binding action
               else
                 myColl.bindToRecord(template, this, e.target);  //Force the binded action
+            },
+            'change input[type=file]': function(e, temp) {
+              //Handle a fileupload
+              var target = e.target;     
+              if (!target.getAttribute('bindKey'))
+                return; //If not a binded filehandler
+              var unifiedId = (this._id)?this._id:'unknown';
+              var querySrc = unifiedId+'.'+target.getAttribute('bindKey')+'_data';
+              var queryString = 'img[name="'+querySrc+'"],a[name="'+querySrc+'"]';
+              var targetSrc = temp.findAll(queryString);         
+
+              oFReader = new FileReader();//, rFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+               
+              oFReader.onload = function (oFREvent) {
+                console.log('Update scope');
+                for (var i in targetSrc) //Change all images and links
+                  if (targetSrc[i].tagName == 'IMG') 
+                    targetSrc[i].src  = oFREvent.target.result
+                  else
+                    targetSrc[i].href  = oFREvent.target.result;
+              };
+               
+              if (target.files.length === 0) { return; }
+              var oFile = target.files[0];
+              //if (!rFilter.test(oFile.type)) { alert("You must select a valid image file!"); return; }
+
+              oFReader.readAsDataURL(oFile);
+
             }
           });
+
+          //TODO: Do a revalidation
       } //EO isClient  
     },
     bindUpdateLive: function(data, element) {
@@ -69,6 +101,7 @@
               invalid = (!validators[key](value)); //A validator returns true if its ok, 
 
           if (dataChanged || invalid) {
+          console.log(target.name + '  '+dataChanged);  
             bindRecord.record(unifiedId, bindkey).dirty(dataChanged); //Can be that data isn't dirty but only invalid
             bindRecord.record(unifiedId, bindkey).node(target);
             bindRecord.record(unifiedId, bindkey).invalid(invalid);
@@ -84,10 +117,33 @@
     },*/
     //DOM helper
     getBindInputValue: function(target) {
-      return (target)?target.value:''; //TODO: Support more than INPUT
+      console.log('Get ' + target.name);
+      var value = (target)?target.value:''; //Std get value
+      if (target.type == 'checkbox') 
+        value = (target.checked)?value:'';
+      if (target.tagName == 'IMG') {
+        value = target.src;  
+      }  
+      if (target.tagName == 'A') {
+        value = target.href;  
+      } 
+      return value; //TODO: Support more than INPUT
     },
     //DOM helper
     setBindInputValue: function(target, value) {
+      console.log('Set ' + target.tagName + ' ' + target.name + ' = '+value);
+      if (target.tagName == 'IMG') {
+        target.src = '';//value;  
+        return;
+      }
+      if (target.tagName == 'A') {
+        target.href = value;  
+        return;
+      }
+      if (target.getAttribute('type') == 'checkbox') {
+        target.checked = (target.getAttribute('value') == value);
+        return;
+      }  
       target.value = value;  //TODO: support more than INPUT
     },
     /*
@@ -123,7 +179,6 @@
 
         if (isExistingRecord) {
           //Valid actions is update, delete or cancel
-
           //## UPDATE RECORD
           if (bindAction=='update') {
             //Check if record is dirty if so then update
@@ -163,7 +218,7 @@
               bindRecord.record(unifiedId).eachNode(function(node, key) {
                 newData[key] = coll.getBindInputValue(node); //set new value 
                 coll.setBindInputValue(node, ''); //Default?
-              });              
+              });             
               if (Object.keys(newData).length != 0) //If data changed
                 coll.insert(newData); //Insert in database
             } //EO isBindDirty          

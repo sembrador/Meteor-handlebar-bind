@@ -156,8 +156,17 @@ function BindRecord() {
           }  
         } else {
           var carry = []; //Arrayify statusRecord, handlebars each want true array 
-          for (var id in statusRecord)
+          var buffer = [];
+          var result = {};
+          for (var id in statusRecord) {
+            for (var a in statusRecord[id])
+              if (statusRecord[id][a] == true)
+                result[a] = true;
             carry.push({ 'name': id, 'key': statusRecord[id] });
+          }
+          buffer.push({'status': true, 'key': result});
+          //if (Object.keys(carry).length > 0)
+          carry = buffer.concat(carry);
           return carry;
         }  
       } else {
@@ -176,7 +185,7 @@ function BindRecord() {
           }
         var carry = []; //Arrayify buffer, handlebars each want true array
         if (Object.keys(buffer).length > 0)
-          carry.push({ 'total': totals }); //Add data for the total invalids etc. on template
+          carry.push({ 'status': true, 'key': totals }); //Add data for the total invalids etc. on template
         for (var id in buffer)
           carry.push({ 'name': id, 'key': buffer[id] }); //Add data for counts pr. key
         return carry;

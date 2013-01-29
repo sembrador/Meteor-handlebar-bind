@@ -3,68 +3,186 @@
 </head>
 
 <body>
+<a href="https://github.com/raix/Meteor-handlebar-bind"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png" alt="Fork me on GitHub"></a>
+<br/>
   {{> hello}}
 </body>
 
 <template name="hello">
-  <h1>Hello World!</h1>
-  <i>Testing handlebar/Collection bindings</i><br/>
-  <br/>
+  <h1>Hello World! - handlebar-bind</h1>
+  <br/><br/>
+  <i>Testing handlebar/Collection/Validation bindings and premature filehandling</i><br/>
+  The javascript for this page:<a class="accordion-toggle" data-toggle="collapse" data-target="#collapseCode">Show/hide</a><br/>
+  <pre id="collapseCode" class="collapse">
+
+var testCol = new Meteor.Collection('testcol');
+testCol.bindTemplate('hello', {
+  liveUpdate: false,  //Liveupdate instead of bindActions update, cancel
+  validation: {
+    name: {
+      validators: [ Validators.required ]  //Mulitiple validators allowed
+    },
+    email: {
+    validators: [ Validators.email ]
+    }
+  }
+});
+  </pre>
+  Some helpers:<a class="accordion-toggle" data-toggle="collapse" data-target="#collapseHelpers">Show/hide</a><br/>
+  <pre id="collapseHelpers" class="collapse">
+
+    Bind html element:
+    &lt;textarea rows="3" {{dstache}}bind 'description'}}&gt;&lt;/textarea&gt;
+
+    Create, Update, Delete, Upload or Cancel:
+    &lt;a class="btn" {{dstache}}bindAction 'cancel'}}&gt;Cancel&lt;/a&gt;
+
+    File upload:
+    &lt;input type="file" accept="image/*" {{dstache}}bindAction 'upload' 'image' }}&gt;
+
+    Get validation status:
+    &lt;input {{dstache}}bind 'name'}} placeholder="Name"/&gt;{{dstache}}#if bindStatus 'hello' 'name' 'invalid'}}*{{dstache}}/if}}
+
+    From the handlebar-helpers package:
+    {{dstache}}#each find 'testCol' '{}'}}
+  </pre>
   
+<i>Note: "The file uploader lacks some work still - the hard part is getting spark to live update while still preserving the contents of the src in a img or a tag + A validation run at loaded page is to come."</i><br/>
+  </pre>  
+  <br/>
   <div class="container">
     <div class="row">
       <div class="span4">Name</div>
       <div class="span4">Email</div>
       <div class="span4">Action</div>
     </div>
+    <div class="span12" style="border:1px dashed gray;">
+      <div class="row">
+        <div class="span4">
+          <input {{bind 'name'}} placeholder="Name"/>{{#if bindStatus 'hello' 'name' 'invalid'}}*{{/if}}
+        </div>
+        <div class="span4">
+          <input {{bind 'email'}} type="email" placeholder="Email"/> {{#if bindStatus 'hello' 'email' 'invalid'}}*{{/if}}
+        </div>
 
-    <div class="row">
-      <div class="span4">
-        <input {{bind 'name'}} placeholder="Name"/>{{isBindDirty 'name'}}{{bindMessage 'name'}}
+        <div class="span4">
+          {{#with bindState 'hello'}}
+            <button {{bindAction 'create'}} class="btn"{{#if error}} disabled{{/if}}>Add</button>
+          {{/with}}
+          <button {{bindAction 'cancel'}} class="btn">Cancel</button>
+        </div>
       </div>
-      <div class="span4">
-        <input {{bind 'email'}} type="email" placeholder="Email"/>{{isBindDirty 'email'}}{{bindMessage 'email'}}
+      <div class="row">
+        <div class="span4">
+          <textarea rows="3" {{bind 'textarea'}}></textarea>
+        </div>
+        <div class="span4">
+          <input type="checkbox" {{bind 'check' 'check'}}/> Check
+          <input type="radio" {{bind 'radio' 'A'}}/> A
+          <input type="radio" {{bind 'radio' 'B'}}/> B
+          <input type="radio" {{bind 'radio' 'C'}}/> C
+          <br/><br/>
+          <select {{bind 'select'}}>
+            <option {{bindSelected 'select' 'Banan'}}>Banan</option>  
+            <option {{bindSelected 'select' 'Apple'}}>Apple</option>
+            <option {{bindSelected 'select' 'Orange'}}>Orange</option>
+            <option {{bindSelected 'select' 'Lemon'}}>Lemon</option>
+          </select>
+        </div>
       </div>
-      <div class="span4">
-        <button {{bindAction 'create'}} class="btn">Add</button>
-        <button {{bindAction 'cancel'}} class="btn">Cancel</button>
+      <div class="row">
+        <div class="span4">
+          <img width="100px" id="ff" {{bind 'image_data'}}/><br/>
+          {{image.filename}} - {{image.filesize}}
+        </div>
+        <div class="span4">
+          <input type="file" accept="image/*" {{bindAction 'upload' 'image' '3000000'}}>
+        </div>
       </div>
+    </div>  
+  </div>  
+    {{#if bindStatus 'hello' 'email' 'warning'}}
+    <div class="alert span12">
+      <h4>That's not an email!</h4> Well I'm only giving you a warning sice it's not a required field...
     </div>
-    {{bindMessage}}
+    {{/if}}
+
+  <div class="container">
+    <div class="row">
+    <table class="table">
+      Bind validation status on the 'add' part in the template.<br/>
+      <tr>  
+        {{#each bindStatus 'hello'}}
+          <td>
+          {{name}}<br/>
+          {{#with key}}
+            invalid: {{invalid}}<br/>
+            error: {{error}}<br/>
+            warning: {{warning}}<br/>
+            required: {{required}}<br/>
+            dirty: {{dirty}}<br/>
+          {{/with}}
+        </td>
+        {{else}}
+        <td>
+          No bindStatus
+        </td>
+        {{/each}}
+      </tr>
+    </table>
+    </div>
 
     {{#each find 'testCol' '{}'}}
-    <div class="row">
-      <div class="span4">
-        <input {{bind 'name'}} placeholder="Name"/>{{isBindDirty 'name'}}{{bindMessage 'name'}}
+    <div class="span12" style="border:1px dashed gray;">
+      <div class="row">
+        <div class="span4">
+          <input {{bind 'name'}} placeholder="Name"/>{{#if bindStatus 'hello' 'name' 'invalid'}}*{{/if}}
+        </div>
+        <div class="span4">
+          <input {{bind 'email'}} type="email" placeholder="email"/>{{#if bindStatus 'hello' 'email' 'invalid'}}*{{/if}}
+        </div>
+        <div class="span4">
+           <button type="button" {{bindAction 'update'}} class="btn" {{#if bindStatus 'hello' 'name' 'invalid'}} disabled{{/if}}> Update</button>
+          <a {{bindAction 'cancel'}} class="btn">Cancel</a>
+          <input type="button" value="Delete" {{bindAction 'delete'}} class="btn"/>
+        </div>
       </div>
-      <div class="span4">
-        <input {{bind 'email'}} type="email" placeholder="email"/>{{isBindDirty 'email'}}{{bindMessage 'email'}}
+      <div class="row">  
+        <div class="span4">
+          <textarea rows="3" {{bind 'textarea'}}>{{textarea}}</textarea>
+        </div>      
+        <div class="span4">
+          <input type="checkbox" {{bind 'check' 'check'}}>
+          <input type="radio" {{bind 'radio' 'A'}}/> A
+          <input type="radio" {{bind 'radio' 'B'}}/> B
+          <input type="radio" {{bind 'radio' 'C'}}/> C
+          <br/><br/>
+          <select {{bind 'select'}}>
+            <option {{bindSelected 'select' 'Banan'}}>Banan</option>  
+            <option {{bindSelected 'select' 'Apple'}}>Apple</option>
+            <option {{bindSelected 'select' 'Orange'}}>Orange</option>
+            <option {{bindSelected 'select' 'Lemon'}}>Lemon</option>
+          </select>
+        </div>
       </div>
-      <div class="span4">
-        <button type="button" {{bindAction 'update'}} class="btn">Update</button>
-        <a {{bindAction 'cancel'}} class="btn">Cancel</a>
-        <input type="button" value="Delete" {{bindAction 'delete'}} class="btn"/>
+      <div class="row">
+        <div class="span4">
+          <img width="100px" src="{{image_data}}" id="dfd" {{bind 'image_data'}}/><br/>
+          {{image}} - {{image.filesize}}
+        </div>
+        <div class="span4">
+          <input type="file" accept="image/*" {{bindAction 'upload' 'image' '3000000'}}>
+        </div>
       </div>
     </div>
-    {{bindMessage}}
-    {{#validationMsg 'hello' 'name'}}
-    Success
-    {{else}}
-    Fail
-    {{/validationMsg}}
     {{else}}
       <div class="row">
-       <div class="span12">No data</div>
+       <div class="span12">No data, you should giv it a try..</div>
       </div>
     {{/each}}
 
-    <div class="row">
-      {{#each bindStatus 'hello'}}
-      {{this}}
-      {{else}}
-      No bindStatus
-      {{/each}}
-    </div>
+
+
 
   </div>
 

@@ -35,7 +35,7 @@
 
 <!-- bind tests 40 -->
 <template name="test_helpers_40">
-{{#each bindStatusReport 'test_helpers_40'}}{{#if this.key}}{{name}}{{#with this.key}}d{{dirty}},w{{warning}},e{{error}},i{{invalid}},r{{required}}{{/with}}{{/if}}{{#if this.total}}{{#with this.total}}d{{dirty}},w{{warning}},e{{error}},i{{invalid}},r{{required}}{{/with}}{{/if}}{{/each}}
+{{#each bindStatusReport 'test_helpers_40'}}{{#if this.key}}{{name}}{{#with this.key}}d{{dirty}},w{{warning}},e{{error}},i{{invalid}},r{{required}}{{/with}}{{/if}}{{#if this.status}}{{#with this.key}}d{{dirty}},w{{warning}},e{{error}},i{{invalid}},r{{required}}{{/with}}{{/if}}{{/each}}
 </template>
 
 <!-- bind tests 50 -->

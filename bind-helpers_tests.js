@@ -8,8 +8,8 @@
 	Tinytest.add('Handlebar bind helper - Helper {{bind}}', function (test) {
 		var onscreen1 = OnscreenDiv(Meteor.render(Template.test_helpers_10));
 		test.notEqual(Template.test_helpers_10, undefined, 'Test template 10');
-		test.equal(onscreen1.rawHtml(), '<input value="" bindkey="name" id="unknown.name">', '1');
-
+		test.equal(onscreen1.rawHtml(), '<input value="" bindkey="name" name="unknown.name">', '1');
+							
 		onscreen1.kill();
 
 		Session.set('data', 'test');
@@ -17,10 +17,10 @@
 		var onscreen2 = OnscreenDiv(Meteor.render(Template.test_helpers_11));
 		test.notEqual(Template.test_helpers_11, undefined, 'Test template 11');
 		Meteor.flush();
-		test.equal(onscreen2.rawHtml(), '<input value="test" bindkey="name" id="1.name">', '2');
+		test.equal(onscreen2.rawHtml(), '<input value="test" bindkey="name" name="1.name">', '2');
 		Session.set('data', 'ok');
 		Meteor.flush();
-		test.equal(onscreen2.rawHtml(), '<input value="ok" bindkey="name" id="1.name">', '3');
+		test.equal(onscreen2.rawHtml(), '<input value="ok" bindkey="name" name="1.name">', '3');
 
 		onscreen2.kill();
 
@@ -30,7 +30,7 @@
 	Tinytest.add('Handlebar bind helper - Helper {{bindAction}}', function (test) {
 		var onscreen1 = OnscreenDiv(Meteor.render(Template.test_helpers_20));
 		test.notEqual(Template.test_helpers_20, undefined, 'Test template 20');
-		test.equal(onscreen1.rawHtml(), '<button bindaction="create" id="unknown.__create"></button>', '1');
+		test.equal(onscreen1.rawHtml(), '<button bindaction="create" name="unknown.__create"></button>', '1');
 
 		onscreen1.kill();
 
@@ -38,7 +38,7 @@
 		var onscreen2 = OnscreenDiv(Meteor.render(Template.test_helpers_21));
 		test.notEqual(Template.test_helpers_21, undefined, 'Test template 21');
 		Meteor.flush();
-		test.equal(onscreen2.rawHtml(), '<button bindaction="create" id="1.__create"></button>', '2');
+		test.equal(onscreen2.rawHtml(), '<button bindaction="create" name="1.__create"></button>', '2');
 
 		onscreen2.kill();		
 	});
@@ -134,7 +134,7 @@
 		//Reactivity
 		Meteor.flush();
 		//Test reply should expect name as dirty, warning and invalid 'dwi' - dweir  (dirty, warning, error, invalid, required)
-		test.equal(onscreen1.rawHtml(), 'namedwi', '2');
+		test.equal(onscreen1.rawHtml(), 'dwinamedwi', '2');
 
 		//Test Set validation
 		testTemplate.bindRecord.record('unknown', 'email').required(true);
@@ -144,7 +144,7 @@
 		Meteor.flush();
 		//Test reply should expect name as dirty, error, invalid and required 'deir' - dweir  (dirty, warning, error, invalid, required)
 		//Test reply should expect email as dirty and required 'dr' - dweir  (dirty, warning, error, invalid, required)
-		test.equal(onscreen1.rawHtml(), 'namedeiremaildr', '3');
+		test.equal(onscreen1.rawHtml(), 'deirnamedeiremaildr', '3');
 
 		onscreen1.kill();		
 	});
@@ -176,7 +176,7 @@
 		//Reactivity
 		Meteor.flush();
 		//Test reply should expect name as dirty, warning and invalid 'dwi' - dweir  (dirty, warning, error, invalid, required)
-		test.equal(onscreen1.rawHtml(), 'd1,w1,e,i1,rnamed1,w1,e,i1,r', '2');
+		test.equal(onscreen1.rawHtml(), 'd1,w1,e,i1,rd1,w1,e,i1,rnamed1,w1,e,i1,r', '2');
 
 		//Test Set validation
 		testTemplate.bindRecord.record('unknown', 'email').required(true);
@@ -186,7 +186,7 @@
 		Meteor.flush();
 		//Test reply should expect name as dirty, error, invalid and required 'deir' - dweir  (dirty, warning, error, invalid, required)
 		//Test reply should expect email as dirty and required 'dr' - dweir  (dirty, warning, error, invalid, required)
-		test.equal(onscreen1.rawHtml(), 'd2,w,e1,i1,r2named1,w,e1,i1,r1emaild1,w,e,i,r1', '3');
+		test.equal(onscreen1.rawHtml(), 'd2,w,e1,i1,r2d2,w,e1,i1,r2named1,w,e1,i1,r1emaild1,w,e,i,r1', '3');
 
 		onscreen1.kill();		
 	});

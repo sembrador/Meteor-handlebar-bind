@@ -38,23 +38,23 @@ if (Meteor.isClient) {
 		var onscreen1 = OnscreenDiv(Meteor.render(testTemplate));
 
 		//get elements from the template
-		var elementName = document.getElementById(dataThis._id+'.name');
-		var elementEmail = document.getElementById(dataThis._id+'.email');
-		var elementActionUpdate = document.getElementById(dataThis._id+'.__update');
-		var elementActionDelete = document.getElementById(dataThis._id+'.__delete');
-		var elementActionCancel = document.getElementById(dataThis._id+'.__cancel');
+		var elementName = document.getElementsByName(dataThis._id+'.name')[0];
+		var elementEmail = document.getElementsByName(dataThis._id+'.email')[0];
+		var elementActionUpdate = document.getElementsByName(dataThis._id+'.__update')[0];
+		var elementActionDelete = document.getElementsByName(dataThis._id+'.__delete')[0];
+		var elementActionCancel = document.getElementsByName(dataThis._id+'.__cancel')[0];
 
-		var newName = document.getElementById('unknown.name');
-		var newEmail = document.getElementById('unknown.email');
-		var newActionCreate = document.getElementById('unknown.__create');
-		var newActionCancel = document.getElementById('unknown.__cancel');
+		var newName = document.getElementsByName('unknown.name')[0];
+		var newEmail = document.getElementsByName('unknown.email')[0];
+		var newActionCreate = document.getElementsByName('unknown.__create')[0];
+		var newActionCancel = document.getElementsByName('unknown.__cancel')[0];
 
 		/*console.log(elementName);
 		console.log(elementActionUpdate);
 
 		console.log(onscreen1.rawHtml());*/
 
-		test.equal(testTemplate.bindRecord.get(dataThis._id), []);
+		test.equal(testTemplate.bindRecord.get(dataThis._id), [{"status":true,"key":{}}]);
 		//Simulate field keyup event update
 		elementName.value = 'updated';
 		testCollection.bindToRecord(testTemplateName, dataThis, elementName);
@@ -80,7 +80,7 @@ if (Meteor.isClient) {
 		//Test delete
 		testCollection.doBindAction(testTemplateName, dataThis, elementActionDelete);
 		Meteor.flush();
-		test.equal(onscreen1.rawHtml().length, 238);
+		test.equal(onscreen1.rawHtml().length, 246);
 		var dataCheck = testCollection.findOne({});
 		test.isUndefined(dataCheck);
 		//Test insert validation required / error
