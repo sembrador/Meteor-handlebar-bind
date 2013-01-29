@@ -1,6 +1,6 @@
 {
   "name": "handlebar-bind",
-  "description": "Meteor handlebar twoway databinding: bind, bindAction, bindStatus, bindStatusReport",
+  "description": "Meteor handlebar twoway databinding: bind, bindAction, bindStatus, bindStatusReport - Has premature filehandling",
   "homepage": "https://github.com/raix/Meteor-handlebar-bind",
   "author": "Morten Henriksen  (http://gi-software.com)",
   "version": "0.0.1",
