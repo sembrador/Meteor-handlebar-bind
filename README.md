@@ -1,7 +1,7 @@
 #Handlebar-bind - This is early sneak peek test state!
 Is a simple way of binding Collections to the Meteor handlebars template environment.
 
-Have a look at [Live example](http://handlebar-helpers.meteor.com/)
+Have a look at [Live example](http://handlebar-bind.meteor.com/)
 
 There are 3 simple bind handlers
 * {{bind}}
