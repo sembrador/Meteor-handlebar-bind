@@ -10,7 +10,9 @@
           Template[template].validation = (options)?options.validation:undefined;
           Template[template].collectionBinding = this;
           Template[template].preserve({
-            'img[name]' : function(node) { return node.name; }
+            'img[id]' : function(node) { 
+              console.log('Preserve: '+node.id);
+              return node.id; }
           });
           Template[template].events({
             'click input[type=button], click a.btn, click button': function(e, temp) {

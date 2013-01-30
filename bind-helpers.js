@@ -11,16 +11,29 @@
       if (!key || key=='_id' || key instanceof Object)
         return; // {{bind}} lacks user intend for bind action, cannot alter _id
       isSetDefaultValue = typeof(defaultValue) != 'object';
-      defaultValue = (isSetDefaultValue)?defaultValue:this[key];
+      
+      var testDataString = (this[key])?this[key].slice(0, Math.min(5, this[key].length)):'';
+      //Ok, if we got 'data:' as a beginning and a long string +300 we wont set a value...
+      //This must be some kind of larger data, so we let the user deside
+      //If we knew and template we could check to se if the user had changed this data
+      //This could be solved by changing the {{find}} and {{findOne}} functionallity to include
+      //validation / the bindRecord?
+      if (testDataString == 'data:' && this[key].length > 300)
+        /* NOP */
+        defaultValue = undefined
+      else
+        defaultValue = (isSetDefaultValue)?defaultValue:this[key];
+
       if (typeof(defaultValue) == 'object') defaultValue = undefined; //in case a fileobject is handed
 
       var setValue = (defaultValue)?(' value="'+_.escape(defaultValue)+'"'):'value=""'; //Only set value if key found
       //If key not found then the binding could be on new data set or fail use
       var setBindKey = 'bindKey="'+key+'"';                                //Attach bind to data key in collection record
       var unifiedId = (this._id)?this._id:'unknown';
-      var setId = 'name="'+unifiedId+'.'+key+'"';      //Preserve input
+      var setId = 'id="'+unifiedId+'.'+key+'"';      //Preserve input
+      var setName = 'name="'+unifiedId+'.'+key+'"';      //Preserve input
       var setChecked = (isSetDefaultValue && this[key] == defaultValue)?'checked="checked"':'';
-      return new Handlebars.SafeString(setValue+setBindKey+setId+setChecked);          //Output element's: [value] bindKey id
+      return new Handlebars.SafeString(setValue+setBindKey+setId+setName+setChecked);          //Output element's: [value] bindKey id
     });
 
     Handlebars.registerHelper('bindSelected', function (key, defaultValue) {

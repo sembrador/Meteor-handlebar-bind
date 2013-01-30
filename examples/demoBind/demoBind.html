@@ -92,7 +92,7 @@ testCol.bindTemplate('hello', {
       </div>
       <div class="row">
         <div class="span4">
-          <img width="100px" id="ff" {{bind 'image_data'}}/><br/>
+          <img width="100px" {{bind 'image_data'}}/><br/>
           {{image.filename}} - {{image.filesize}}
         </div>
         <div class="span4">
@@ -167,11 +167,11 @@ testCol.bindTemplate('hello', {
       </div>
       <div class="row">
         <div class="span4">
-          <img width="100px" src="{{image_data}}" id="dfd" {{bind 'image_data'}}/><br/>
+          <img width="100px" src="{{image_data}}" {{bind 'image_data' true}}/><br/>
           {{image}} - {{image.filesize}}
         </div>
         <div class="span4">
-          <input type="file" accept="image/*" {{bindAction 'upload' 'image' '3000000'}}>
+          <input type="file" accept="image/*" {{bindAction 'upload' 'image' 3000000}}>
         </div>
       </div>
     </div>
