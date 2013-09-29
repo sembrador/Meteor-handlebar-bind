@@ -93,7 +93,7 @@ function BindRecord() {
     };
     getSetter.data = function(recordSet) {
       if (recordSet != undefined && unifiedId != undefined)
-        return getRecord(true) = recordSet
+        return getRecord(true) === recordSet
       else
         return getRecord();
     };
